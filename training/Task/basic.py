@@ -11,8 +11,10 @@ from torch.utils import data
 from torch import nn
 
 from abc import ABC, abstractmethod
+from utils.arg import ConfigParser
 
 import wandb
+
 
 # import os
 # import matplotlib.pyplot as plt
@@ -20,18 +22,19 @@ import wandb
 # import torchvision
 
 class BasicTask(ABC):
-    def __init__(self, config):
-        self.config = config
+    def __init__(self, config_json='./BasicDefault.json'):
+        self.config = ConfigParser(config_json).get_config()
+        self.args = None
         self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-        self.model = self.build_model()
-        self.optimizer = self.build_optimizer()
-        self.criterion = self.build_criterion()
-        self.scheduler = self.build_scheduler()
-        self.train_loader, self.val_loader = self.build_dataloader()
 
-    @abstractmethod
-    def build_model(self):
-        pass
+    def parse_args(self):
+        self.args = ConfigParser(config_dict=self.config).parse_args()
+
+    def run(self):
+        if self.args is None:
+            raise ValueError('Please parse args first')
+
+
 
     @abstractmethod
     def build_optimizer(self):

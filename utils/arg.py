@@ -17,34 +17,52 @@ from torch import nn
 # import pandas as pd
 # import torchvision
 
-class ConfigParser:
-    def __init__(self, json_file):
-        self.json_file = json_file
-        self.config = self.load_json(json_file)
+import json
+import argparse
 
-    def load_json(self, json_file):
-        with open(json_file, 'r') as f:
-            config = json.load(f)
+
+class ConfigParser:
+    def __init__(self, json_file: str = None, config_dict: dict = None):
+        self.different = None
+        if config_dict is None:
+            config_dict = {}
+        self.json_file = json_file
+        self.config_dict = config_dict
+        self.config = self.load_config()
+
+    def load_config(self):
+        config = {}
+        if self.json_file:
+            with open(self.json_file, 'r') as f:
+                config = json.load(f)
+        if self.config_dict:
+            config.update(self.config_dict)
         return config
 
     def parse_args(self):
-        parser = argparse.ArgumentParser(description=self.json_file)
+        parser = argparse.ArgumentParser(description=self.json_file)  # '配置参数解析器'
 
-        # 遍历JSON文件中的所有键值对,并添加到参数解析器中
         for key, value in self.config.items():
             if isinstance(value, bool):
-                parser.add_argument(f'--{key}', action='store_true', default=value, help=f'{key}')
+                parser.add_argument(f'--{key}', action='store_true', default=value, help=f'{key}的值')
             else:
-                parser.add_argument(f'--{key}', type=type(value), default=value, help=f'{key}')
+                parser.add_argument(f'--{key}', type=type(value), default=value, help=f'{key}的值')
 
-        # 解析命令行参数
         args = parser.parse_args()
 
-        # 用解析出的参数更新原有的配置字典
+        self.different = {}
         for key, value in vars(args).items():
+            if self.config[key] != value:
+                self.different[key] = value
             self.config[key] = value
 
         return args
+
+    def update_config(self, new_config):
+        self.config.update(new_config)
+
+    def get_different(self):
+        return self.different
 
     def get_config(self):
         return self.config
