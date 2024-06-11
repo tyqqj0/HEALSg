@@ -1,0 +1,19 @@
+{
+  "json_list": "data/seg_data_files/vessel.json",
+  "workers": 1,
+  "use_normal_dataset": false,
+  "a_min": -175.0,
+  "a_max": 250.0,
+  "b_min": 0.0,
+  "b_max": 1.0,
+  "space_x": 1.0,
+  "space_y": 1.0,
+  "space_z": 1.0,
+  "roi_x": 96,
+  "roi_y": 96,
+  "roi_z": 96,
+  "RandFlipd_prob": 0.2,
+  "RandRotate90d_prob": 0.2,
+  "RandScaleIntensityd_prob": 0.1,
+  "RandShiftIntensityd_prob": 0.1
+}
