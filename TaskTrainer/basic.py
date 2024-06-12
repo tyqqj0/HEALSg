@@ -36,9 +36,17 @@ class BasicTask(ABC):
     # config_json = os.path.join(current_directory, 'Basic.json')
 
     # config = 0
-    def __init__(self, config_dict=None, config_json=None, use_wandb=True, experiment_name='train', method='', api_key=None, group_name='basic'):
+    def __init__(self, config_dict=None, config_json=None, use_wandb=True, experiment_name='train', custom_run_name='', api_key=None, group_name='basic'):
+        self.custom_run_name = custom_run_name
+        self.time = time.strftime("%Y%m%d-%H%M%S", time.localtime())
+        if use_wandb:
+            text_in_box('Use Wandb', color='red')
+            print('Login Wandb...')
+            wandb.login()
+            print('Init Wandb...')
+            wandb.init(project=experiment_name, name=self.run_name, group=group_name)
         self.api_key = api_key
-        text_in_box(f'Init Task {task}', color='orange')
+        text_in_box(f'Init Task run in {experiment_name}', color='orange')
 
         self.different_args = None
         # self.config = ConfigParser(config_json or self.config_json).get_config()
@@ -48,9 +56,8 @@ class BasicTask(ABC):
         self.use_wandb = use_wandb
         self.experiment_name = experiment_name
         self.group_name = group_name
-        self.task = task
-        self.method = method
-        self.time = time.strftime("%Y%m%d-%H%M%S", time.localtime())
+        # self.task = task
+
         self._run_name = None
         #################DATA_params#################
         print('Building dataloader...')
@@ -75,7 +82,7 @@ class BasicTask(ABC):
         self.scheduler = self.build_scheduler()
         self.train_epoch = None
         self.val_epoch = None
-        text_in_box(f'Init Task {task} Done', color='orange')
+        text_in_box(f'Init run {self.run_name} Done', color='orange')
 
     # def init(self):
 
@@ -145,7 +152,10 @@ class BasicTask(ABC):
             config = merge_configs(config, ConfigParser(config_json).get_config())
 
         if config_dict is not None:
-            config = merge_configs(config, config_dict)
+            if config_dict == 'agent' and self.use_wandb:
+                config = merge_configs(config, wandb.config)
+            else:
+                config = merge_configs(config, config_dict)
 
             # 解析最终的配置字典
         parser = ConfigParser(config_dict=config)
@@ -186,13 +196,9 @@ class BasicTask(ABC):
         text_in_box(f'Start Run {self.run_name}', color='magenta')
         if self.args is None:
             raise ValueError('Please use parse_args first')
-        self._property_check()
+        self.__property_check()
         if self.use_wandb:
-            text_in_box('Use Wandb', color='red')
-            print('Login Wandb...')
-            wandb.login()
-            print('Init Wandb...')
-            wandb.init(project=self.experiment_name, name=self.run_name, config=self.args, group=self.group_name)
+            wandb.config.update(self.args)
         self.running = True
         self.run_train()
         # for epoch in range(1, self.max_epoch + 1):
@@ -202,7 +208,7 @@ class BasicTask(ABC):
         if self.use_wandb:
             wandb.finish()
 
-    def _property_check(self):
+    def __property_check(self):
         # 检查所有属性的设值情况
         required_properties = [
             'train_loader', 'val_loader', 'model', 'criterion', 'optimizer', 'device', 'epoch', 'max_epoch', 'running'
@@ -215,6 +221,8 @@ class BasicTask(ABC):
 
     @property
     def run_name(self):
+        if self.running:
+            return self._run_name
         if self._run_name is None:
             # run_name
             optional_info = ''
@@ -231,13 +239,12 @@ class BasicTask(ABC):
                         optional_info += f'{key}-{value}_'
             # self.run_name = self.run_name[:-1]
             # 如果运行已经开始，返回当前运行的 run_name
-            if self.running:
-                return
+
             # 每次调用 run_name 时，都会根据当前属性构造 run_name
             components = [
-                self.method,
-                self.args.model,
-                self.args.data_set,
+                self.custom_run_name,
+                # self.args.model,
+                # self.args.data_set,
                 optional_info,
                 self.time
             ]
@@ -293,7 +300,7 @@ class BasicEpoch(ABC):
         text_in_box(f'{self.name} epoch {self.task.epoch}', color=self.color)
         if self.bar:
             self.loader = RichProgressIterator(self.loadert, description=f'{self.name} epoch')
-# print("start")
+        # print("start")
         return self.epoch()
 
     # def print(self):

@@ -19,18 +19,20 @@ from TaskTrainer.TaskModel.Resnet import Resnet
 from utils.arg import ConfigParser
 
 
-class test_trainer(Supervised, ClassificationData, Resnet):
-    # method, data, model
-    # config_json = 'TaskTrainer\\Basic.json'
-
-    def __init__(self, config_dict=None, config_json=None, method='', use_wandb=True, experiment_name='debug', group_name='basic'):
-        super(test_trainer, self).__init__(config_dict, config_json=config_json, use_wandb=use_wandb, experiment_name=experiment_name, method=method,
-                                           group_name=group_name)
+def main(experiment_name='train', group_name='basic', run_name='run', config_dict='agent'):
+    # experiment_name = 'train'
+    # group_name = 'basic'
+    trainer = TaskTrainer.get_trainer(Supervised, ClassificationData, Resnet, config_dict=config_dict, experiment_name=experiment_name, group_name=group_name, run_name=run_name)
+    trainer.run()
 
 
 if __name__ == '__main__':
-    trainer = test_trainer()  # , use_wandb=False
-    trainer.run()
+    experiment_name = 'train'
+    group_name = 'basic'
+    run_name = 't1'
+    # trainer = TaskTrainer.get_trainer(Supervised, ClassificationData, Resnet, config_dict=None)
+    # trainer.run()
+    main(experiment_name=experiment_name, group_name=group_name, run_name=run_name)
 
 # import os
 # import matplotlib.pyplot as plt

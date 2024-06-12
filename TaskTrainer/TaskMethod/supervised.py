@@ -10,6 +10,7 @@ import torch
 from torch.utils import data
 from torch import nn
 
+from TaskTrainer.TaskMethod.epochs.supervised import TrainEpoch, ValEpoch
 from TaskTrainer.basic import BasicTask, BasicEpoch
 
 
@@ -20,63 +21,12 @@ from TaskTrainer.basic import BasicTask, BasicEpoch
 
 #TODO: epoch单独放
 
-class TrainEpoch(BasicEpoch):
-    def __init__(self, loader, task):
-        super(TrainEpoch, self).__init__('train', loader, task, 'red', bar=True)
-
-    def epoch(self):
-        self.model.train()
-        train_loss = 0.0
-        correct = 0
-        total = 0
-        for inputs, targets, addition in self.loader:
-            # print(batch_idx)
-            inputs, targets = inputs.to(self.device), targets.to(self.device)
-            self.optimizer.zero_grad()
-            outputs, add_infos = self.model(inputs)
-            loss = self.criterion(outputs, targets)
-            loss.backward()
-            self.optimizer.step()
-
-            train_loss += loss.item()
-            _, predicted = outputs.max(1)
-            total += targets.shape[0]
-            # print(total)
-            correct += predicted.eq(targets).sum().item()
-        if self.scheduler is not None:
-            self.scheduler.step()
-        loss = train_loss / total
-        crr = 100. * correct / total
-        return {'loss': loss, 'acc': crr}
-
-
-class ValEpoch(BasicEpoch):
-    def __init__(self, loader, task):
-        super(ValEpoch, self).__init__('val', loader, task, 'blue', bar=True)
-
-    def epoch(self):
-        self.model.eval()
-        val_loss = 0.0
-        correct = 0
-        total = 0
-        with torch.no_grad():
-            for batch_idx, (inputs, targets, addition) in enumerate(self.loader):
-                inputs, targets = inputs.to(self.device), targets.to(self.device)
-                outputs, add_infos = self.model(inputs)
-                loss = self.criterion(outputs, targets)
-
-                val_loss += loss.item()
-                _, predicted = outputs.max(1)
-                total += targets.shape[0]
-                correct += predicted.eq(targets).sum().item()
-        return {'loss': val_loss / total, 'acc': 100. * correct / total}
-
 
 class Supervised(BasicTask):
     config_json = 'TaskMethod\\Supervised.json'
 
-    def __init__(self, config_dict, config_json=None, method='', use_wandb=True, experiment_name='train', group_name='basic', device='cuda'):
-        super(Supervised, self).__init__(config_dict, config_json=config_json, use_wandb=use_wandb, experiment_name=experiment_name, method=method, group_name=group_name)
+    def __init__(self, config_dict, config_json=None, custom_run_name='', use_wandb=True, experiment_name='train', group_name='basic'):
+        super(Supervised, self).__init__(config_dict, config_json=config_json, use_wandb=use_wandb, experiment_name=experiment_name, custom_run_name=custom_run_name, group_name=group_name)
         self.train_epoch = TrainEpoch(self.train_loader, self)
         self.val_epoch = ValEpoch(self.val_loader, self)
 
