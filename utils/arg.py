@@ -6,6 +6,7 @@
 # @Aim
 import argparse
 import json
+import os
 
 import numpy as np
 import torch
@@ -33,6 +34,15 @@ class ConfigParser:
     def load_config(self):
         config = {}
         if self.json_file:
+            # 如果不存在，询问是否创建
+            if not os.path.exists(self.json_file):
+                print(f'{self.json_file} not exist, create it?')
+                if input('y/n: ') == 'y':
+                    with open(self.json_file, 'w') as f:
+                        json.dump({}, f)
+                else:
+                    raise FileNotFoundError(f'{self.json_file} not exist')
+
             with open(self.json_file, 'r') as f:
                 config = json.load(f)
         if self.config_dict:

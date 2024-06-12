@@ -7,20 +7,14 @@
 import os
 from abc import ABC, abstractmethod
 
-import numpy as np
-import torch
+from monai import data
 from monai import transforms
 from monai.data import load_decathlon_datalist
-from monai import data
 # from torch.utils import data
-from torch import nn
-import monai
 from torch.utils.data import Sampler
 
-from utils.arg import ConfigParser
+from TaskTrainer.basic import BasicTask
 from utils.text import text_in_box
-from .basic import BasicTask
-
 
 
 # import os
@@ -29,14 +23,11 @@ from .basic import BasicTask
 # import torchvision
 
 
-class Segmentation3DTask(BasicTask, ABC):
-    def __init__(self, config_json='./SegmentationDefault.json'):
-        super(Segmentation3DTask, self).__init__()
-        self.config = ConfigParser(config_json, self.config).get_config()
+class Segmentation3DData(BasicTask, ABC):
+    config_json = 'TaskData\\Segmentation.json'
 
-        #################run_params#################
-        self.train_loader = None
-        self.val_loader = None
+    # def __init__(self, config_json=None):
+    #     super(Segmentation3DData, self).__init__()
 
     def build_dataloader(self):
         # create a training data loader
@@ -143,16 +134,14 @@ class Segmentation3DTask(BasicTask, ABC):
             self.train_loader = train_loader
             self.val_loader = val_loader
 
-    def _run_epoch(self):
-        epoch = self.epoch
-        text_in_box(f'Epoch {epoch}', 65)
-
-
-    @abstractmethod
-    def _train_epoch(self):
-        pass
-
-    @abstractmethod
-    def _val_epoch(self):
-        pass
-
+    # def run_epoch(self):
+    #     epoch = self.epoch
+    #     text_in_box(f'Epoch {epoch}', 65)
+    #
+    # @abstractmethod
+    # def _train_epoch(self):
+    #     pass
+    #
+    # @abstractmethod
+    # def _val_epoch(self):
+    #     pass

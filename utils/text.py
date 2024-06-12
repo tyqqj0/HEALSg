@@ -6,7 +6,7 @@
 # @Aim 
 
 
-def text_in_box(text, length=65, center=True, print_box=True, color='cyan'):
+def text_in_box(text, length=65, center=True, print_box=True, color='white'):
     # Split the text into lines that are at most `length` characters long
     lines = [text[i:i + length] for i in range(0, len(text), length)]
 
@@ -20,7 +20,7 @@ def text_in_box(text, length=65, center=True, print_box=True, color='cyan'):
     box = '\n'.join([up_border, contents, down_border])
 
     if print_box:
-        ColorPrinter.print_color(box, 'white')
+        ColorPrinter.print_color(box, color)
 
     return box
 
@@ -35,7 +35,9 @@ class ColorPrinter:
         'magenta': '\033[35m',
         'cyan': '\033[36m',
         'white': '\033[37m',
-        'reset': '\033[0m'
+        'reset': '\033[0m',
+        'orange': '\033[38;5;208m',
+        'gold': '\033[38;5;220m'
     }
 
     @classmethod
