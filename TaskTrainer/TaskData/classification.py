@@ -47,6 +47,7 @@ class ClassificationData(BasicTask):
             transform = transforms.Compose([
                 transforms.ToTensor(),
                 transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))  # 归一化
+
             ])
 
             # 载入 CIFAR-10 数据集

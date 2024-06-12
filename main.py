@@ -21,13 +21,13 @@ from utils.arg import ConfigParser
 class test_trainer(Supervised, ClassificationData, Resnet):
     # config_json = 'TaskTrainer\\Basic.json'
 
-    def __init__(self, config_json=None, task='test', method='resnet', use_wandb=True, experiment_name='debug', group_name='basic', device='cuda'):
+    def __init__(self, config_json=None, task='test', method='', use_wandb=True, experiment_name='debug', group_name='basic', device='cuda'):
         super(test_trainer, self).__init__(config_json=config_json, task=task, method=method, use_wandb=use_wandb, experiment_name=experiment_name, group_name=group_name,
                                            device=device)
 
 
 if __name__ == '__main__':
-    trainer = test_trainer(device='cpu')
+    trainer = test_trainer(device='cuda') #, use_wandb=False
     trainer.run()
 
 # import os

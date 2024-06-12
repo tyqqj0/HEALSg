@@ -27,7 +27,8 @@ class TrainEpoch(BasicEpoch):
         train_loss = 0.0
         correct = 0
         total = 0
-        for batch_idx, (inputs, targets, addition) in enumerate(self.loader):
+        for inputs, targets, addition in self.loader:
+            # print(batch_idx)
             inputs, targets = inputs.to(self.device), targets.to(self.device)
             self.optimizer.zero_grad()
             outputs, add_infos = self.model(inputs)
@@ -37,7 +38,8 @@ class TrainEpoch(BasicEpoch):
 
             train_loss += loss.item()
             _, predicted = outputs.max(1)
-            total += targets.size(0)
+            total += targets.shape[0]
+            # print(total)
             correct += predicted.eq(targets).sum().item()
         if self.scheduler is not None:
             self.scheduler.step()
@@ -63,7 +65,7 @@ class ValEpoch(BasicEpoch):
 
                 val_loss += loss.item()
                 _, predicted = outputs.max(1)
-                total += targets.size(0)
+                total += targets.shape[0]
                 correct += predicted.eq(targets).sum().item()
         return {'loss': val_loss / total, 'acc': 100. * correct / total}
 

@@ -1,6 +1,6 @@
 {
   "data_root": "D:/gkw/data/classification/",
   "data_set": "cifar10",
-  "batch_size": 64,
+  "batch_size": 128,
   "num_workers": 1
 }

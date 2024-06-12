@@ -10,6 +10,7 @@ from abc import ABC, abstractmethod
 
 import torch
 import wandb
+from tqdm import tqdm
 
 from utils.arg import ConfigParser
 from utils.text import text_in_box
@@ -270,6 +271,7 @@ class BasicEpoch(ABC):
         self.device = task.device
         self.color = color
         self.bar = bar
+        self.loadert = loader
         self.loader = loader
         # 检查loader的返回值是否为三个，若不是则报错
         for a in loader:
@@ -283,7 +285,8 @@ class BasicEpoch(ABC):
         self.epoch_count = self.epoch_count + 1
         text_in_box(f'{self.name} epoch {self.task.epoch}', color=self.color)
         if self.bar:
-            self.loader = track(self.loader, description=f'{self.name} epoch')
+            self.loader = track(self.loadert, description=f'{self.name} epoch')
+        # print("start")
         return self.epoch()
 
     # def print(self):
