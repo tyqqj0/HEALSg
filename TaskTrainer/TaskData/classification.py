@@ -21,7 +21,7 @@ class Cifar10(datasets.CIFAR10):
         super(Cifar10, self).__init__(root, train, transform, target_transform, download)
 
     def __getitem__(self, index):
-        img, tgt = super(Cifar10, self).__getitem__(index) #s
+        img, tgt = super(Cifar10, self).__getitem__(index)  # s
         return img, tgt, {'index': index}
 
 
@@ -41,25 +41,27 @@ class ClassificationData(BasicTask):
 
     def build_dataloader(self):
         # create a training data loader
-        if self.args.data_set=='cifar10':
+        if self.args.data_set == 'cifar10':
 
             # 定义数据预处理
             transform = transforms.Compose([
                 transforms.ToTensor(),
-                transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))  # 归一化
-
+                transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)),  # 归一化
+                transforms.RandomCrop(32, padding=4),  # 随机裁剪
+                transforms.RandomHorizontalFlip(),  # 随机水平翻转
+                # transforms.RandomRotation(15),  # 随机旋转
             ])
 
             # 载入 CIFAR-10 数据集
             train_dataset = Cifar10(root=self.args.data_root, train=True,
-                                             download=True, transform=transform)
+                                    download=True, transform=transform)
             test_dataset = Cifar10(root=self.args.data_root, train=False,
-                                            download=True, transform=transform)
+                                   download=True, transform=transform)
 
             # 创建数据加载器
             train_loader = DataLoader(train_dataset, batch_size=self.args.batch_size, shuffle=True, num_workers=self.args.num_workers)
             val_loader = DataLoader(test_dataset, batch_size=self.args.batch_size, shuffle=False, num_workers=self.args.num_workers)
-        elif self.args.data_set=='mnist':
+        elif self.args.data_set == 'mnist':
             transform = transforms.Compose([
                 transforms.ToTensor(),
                 transforms.Normalize((0.5,), (0.5,))

@@ -47,6 +47,70 @@ class ColorPrinter:
         print(f"{cls.COLORS[color]}{text}{cls.COLORS['reset']}")
 
 
+
+
+# from rich.progress import Progress, TextColumn, BarColumn, TimeRemainingColumn
+#
+# class RichProgressIterator:
+#     def __init__(self, iterable, description="Processing", total=None):
+#         self.iterable = iterable
+#         self.description = description
+#         self.total = total if total is not None else len(iterable)
+#         # 定义进度条样式
+#         self.progress = Progress(
+#             TextColumn("[bold cyan]{task.description}", justify="right"),
+#             BarColumn(bar_width=None, complete_style="green", finished_style="bright_blue"),
+#             TextColumn("[bold yellow]{task.completed} of {task.total}", justify="right"),
+#             TextColumn("[bold magenta]{task.percentage:>3.0f}%", justify="right"),
+#             TimeRemainingColumn(),
+#             expand=True
+#         )
+#         self.task = None
+#
+#     def __iter__(self):
+#         with self.progress:
+#             self.task = self.progress.add_task(self.description, total=self.total)
+#             for item in self.iterable:
+#                 yield item
+#                 self.progress.update(self.task, advance=1)
+#
+#     def update_description(self, new_description):
+#         """ Update the progress bar description dynamically. """
+#         if self.task is not None:
+#             self.progress.update(self.task, description=new_description)
+
+
+from rich.progress import Progress, TextColumn, BarColumn, TimeRemainingColumn
+
+class RichProgressIterator:
+    def __init__(self, iterable, description="Processing", total=None):
+        self.iterable = iterable
+        self.description = description
+        self.total = total if total is not None else len(iterable)
+        # 定义进度条样式
+        self.progress = Progress(
+            TextColumn("[bold cyan]{task.description}", justify="right"),
+            BarColumn(bar_width=None, complete_style="green", finished_style="bright_blue"),
+            TextColumn("[bold yellow]{task.completed} of {task.total}", justify="right"),
+            TextColumn("[bold magenta]{task.percentage:>3.0f}%", justify="right"),
+            TimeRemainingColumn(),
+            expand=True
+        )
+        self.task = None
+
+    def __iter__(self):
+        with self.progress:
+            self.task = self.progress.add_task(self.description, total=self.total)
+            for item in self.iterable:
+                yield item
+                self.progress.update(self.task, advance=1)
+
+    def uprint(self, new_description):
+        """ Update the progress bar description dynamically. """
+        if self.task is not None:
+            self.progress.update(self.task, description=new_description)
+
+
 # 分割线
 def split_line(length=65):
     return '\n' + '━' * length + '\n'

@@ -13,7 +13,7 @@ import wandb
 from tqdm import tqdm
 
 from utils.arg import ConfigParser
-from utils.text import text_in_box
+from utils.text import text_in_box, RichProgressIterator
 import rich
 from rich.progress import track
 
@@ -285,8 +285,8 @@ class BasicEpoch(ABC):
         self.epoch_count = self.epoch_count + 1
         text_in_box(f'{self.name} epoch {self.task.epoch}', color=self.color)
         if self.bar:
-            self.loader = track(self.loadert, description=f'{self.name} epoch')
-        # print("start")
+            self.loader = RichProgressIterator(self.loadert, description=f'{self.name} epoch')
+# print("start")
         return self.epoch()
 
     # def print(self):
@@ -294,7 +294,7 @@ class BasicEpoch(ABC):
     def uprint(self, additional_info=""):
         if self.bar:
             # 假设 self.loader 是一个 tqdm 进度条对象
-            self.loader.set_postfix_str(additional_info)
+            self.loader.uprint(additional_info)
         else:
             print(additional_info)
 
