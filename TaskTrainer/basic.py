@@ -182,7 +182,7 @@ class BasicTask(ABC):
         if self.use_wandb:
             text_in_box('Use Wandb', color='red')
             print('Login Wandb...')
-            wandb.login(key=self.api_key)
+            wandb.login()
             print('Init Wandb...')
             wandb.init(project=self.experiment_name, name=self.run_name, config=self.args, group=self.group_name)
         self.running = True

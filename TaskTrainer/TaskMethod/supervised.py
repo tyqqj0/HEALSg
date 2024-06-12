@@ -41,7 +41,9 @@ class TrainEpoch(BasicEpoch):
             correct += predicted.eq(targets).sum().item()
         if self.scheduler is not None:
             self.scheduler.step()
-        return {'loss': train_loss / total, 'acc': 100. * correct / total}
+        loss = train_loss / total
+        crr = 100. * correct / total
+        return {'loss': loss, 'acc': crr}
 
 
 class ValEpoch(BasicEpoch):
