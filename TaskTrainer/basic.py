@@ -25,6 +25,9 @@ from rich.progress import track
 __all__ = ('BasicTask', 'BasicEpoch')
 
 
+# TODO: 加保存
+
+
 class BasicTask(ABC):
     config_json = './Basic.json'
 
@@ -33,14 +36,15 @@ class BasicTask(ABC):
     # config_json = os.path.join(current_directory, 'Basic.json')
 
     # config = 0
-    def __init__(self, config_json=None, task='', method='', use_wandb=True, api_key=None, experiment_name='train', group_name='basic', device='cuda'):
+    def __init__(self, config_dict=None, config_json=None, use_wandb=True, experiment_name='train', method='', api_key=None, group_name='basic'):
         self.api_key = api_key
         text_in_box(f'Init Task {task}', color='orange')
-        self.device = device
+
         self.different_args = None
         # self.config = ConfigParser(config_json or self.config_json).get_config()
         self.args = None
-        self.parse_args(config_json)
+        self.parse_args(config_json, config_dict)
+        self.device = self.args.device
         self.use_wandb = use_wandb
         self.experiment_name = experiment_name
         self.group_name = group_name
@@ -113,7 +117,7 @@ class BasicTask(ABC):
     ##################internal#################
 
     # @classmethod
-    def parse_args(self, config_json=None):
+    def parse_args(self, config_json=None, config_dict=None):
         config = {}
         # for base_class in reversed(self.__class__.mro()):
         #     base_config_json = getattr(base_class, 'config_json', None)
@@ -139,6 +143,9 @@ class BasicTask(ABC):
         if config_json is not None:
             config_json = os.path.join(os.path.dirname(os.path.abspath(__file__)), config_json)
             config = merge_configs(config, ConfigParser(config_json).get_config())
+
+        if config_dict is not None:
+            config = merge_configs(config, config_dict)
 
             # 解析最终的配置字典
         parser = ConfigParser(config_dict=config)

@@ -1,3 +1,4 @@
 {
-  "max_epoch": 1000
+  "max_epoch": 1000,
+  "device": "cuda"
 }

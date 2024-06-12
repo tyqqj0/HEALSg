@@ -18,6 +18,8 @@ from TaskTrainer.basic import BasicTask, BasicEpoch
 # import pandas as pd
 # import torchvision
 
+#TODO: epoch单独放
+
 class TrainEpoch(BasicEpoch):
     def __init__(self, loader, task):
         super(TrainEpoch, self).__init__('train', loader, task, 'red', bar=True)
@@ -73,8 +75,8 @@ class ValEpoch(BasicEpoch):
 class Supervised(BasicTask):
     config_json = 'TaskMethod\\Supervised.json'
 
-    def __init__(self, config_json=None, task='', method='', use_wandb=True, experiment_name='train', group_name='basic', device='cuda'):
-        super(Supervised, self).__init__(config_json=config_json, task=task, method=method, use_wandb=use_wandb, experiment_name=experiment_name, group_name=group_name, device=device)
+    def __init__(self, config_dict, config_json=None, method='', use_wandb=True, experiment_name='train', group_name='basic', device='cuda'):
+        super(Supervised, self).__init__(config_dict, config_json=config_json, use_wandb=use_wandb, experiment_name=experiment_name, method=method, group_name=group_name)
         self.train_epoch = TrainEpoch(self.train_loader, self)
         self.val_epoch = ValEpoch(self.val_loader, self)
 

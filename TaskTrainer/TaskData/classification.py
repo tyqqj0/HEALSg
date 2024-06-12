@@ -16,6 +16,9 @@ from TaskTrainer.basic import BasicTask
 # import pandas as pd
 # import torchvision
 
+
+#TODO: 单独放
+
 class Cifar10(datasets.CIFAR10):
     def __init__(self, root, train=True, transform=None, target_transform=None, download=False):
         super(Cifar10, self).__init__(root, train, transform, target_transform, download)
@@ -53,10 +56,8 @@ class ClassificationData(BasicTask):
             ])
 
             # 载入 CIFAR-10 数据集
-            train_dataset = Cifar10(root=self.args.data_root, train=True,
-                                    download=True, transform=transform)
-            test_dataset = Cifar10(root=self.args.data_root, train=False,
-                                   download=True, transform=transform)
+            train_dataset = Cifar10(root=self.args.data_root, train=True, download=True, transform=transform)
+            test_dataset = Cifar10(root=self.args.data_root, train=False, download=True, transform=transform)
 
             # 创建数据加载器
             train_loader = DataLoader(train_dataset, batch_size=self.args.batch_size, shuffle=True, num_workers=self.args.num_workers)

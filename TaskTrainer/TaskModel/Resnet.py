@@ -21,7 +21,7 @@ from TaskTrainer.basic import BasicTask
 class resnet18(torch.nn.Module):
     def __init__(self, pretrained=False, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        weights = ResNet18_Weights.DEFAULT  # weights =
+        # weights = ResNet18_Weights.DEFAULT  # weights =
         self.model = torchvision.models.resnet18()  # (weights=weights)  # pretrained=pretrained
 
     def forward(self, x):
