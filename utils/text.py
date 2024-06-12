@@ -89,12 +89,12 @@ class RichProgressIterator:
         self.total = total if total is not None else len(iterable)
         # 定义进度条样式
         self.progress = Progress(
-            TextColumn("[bold cyan]{task.description}", justify="right"),
-            BarColumn(bar_width=None, complete_style="green", finished_style="bright_blue"),
-            TextColumn("[bold yellow]{task.completed} of {task.total}", justify="right"),
-            TextColumn("[bold magenta]{task.percentage:>3.0f}%", justify="right"),
+            TextColumn("[bold cyan]{task.description}", justify="left"),
+            BarColumn(bar_width=47, complete_style="green", finished_style="bright_blue"),
+            TextColumn("[bold yellow]{task.completed} of {task.total}", justify="left"),
+            TextColumn("[bold magenta]{task.percentage:>3.0f}%", justify="left"),
             TimeRemainingColumn(),
-            expand=True
+            expand=False
         )
         self.task = None
 
