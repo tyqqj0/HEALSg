@@ -25,8 +25,8 @@ from TaskTrainer.basic import BasicTask, BasicEpoch
 class Supervised(BasicTask):
     config_json = 'TaskMethod\\Supervised.json'
 
-    def __init__(self, config_dict, config_json=None, custom_run_name='', use_wandb=True, experiment_name='train', group_name='basic'):
-        super(Supervised, self).__init__(config_dict, config_json=config_json, use_wandb=use_wandb, experiment_name=experiment_name, custom_run_name=custom_run_name, group_name=group_name)
+    def __init__(self, config_dict, config_json=None, custom_run_name='', use_wandb=True, api_key=None, experiment_name='train', group_name='basic'):
+        super(Supervised, self).__init__(config_dict, config_json=config_json, use_wandb=use_wandb, api_key=api_key, experiment_name=experiment_name, custom_run_name=custom_run_name, group_name=group_name)
         self.train_epoch = TrainEpoch(self.train_loader, self)
         self.val_epoch = ValEpoch(self.val_loader, self)
 
