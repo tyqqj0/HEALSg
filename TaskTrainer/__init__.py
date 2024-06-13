@@ -27,3 +27,4 @@ def get_trainer(method: BasicTask, data: BasicTask, model: BasicTask, config_dic
                      group_name=group_name, run_name=run_name):
             super(trainer, self).__init__(config_dict, config_json=config_json, use_wandb=use_wandb, api_key=api_key, experiment_name=experiment_name,
                                           group_name=group_name, custom_run_name=run_name)
+    return trainer

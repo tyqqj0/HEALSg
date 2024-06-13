@@ -23,10 +23,12 @@ import wandb
 # 1. 定义sweep配置或在wandb网站上定义
 # 2. 生成sweep_id
 # 3. 运行sweep的agent
+from utils.text import text_in_box
 
-
-experiment_name = 'train'
+experiment_name = 'debug'
 group_name = 'basic'
-sweep_id = 'tyqqj_ai/debug/53kcst3q'
+sweep_id = 'tyqqj_ai/debug/tc4kuxd4'
+
+text_in_box(f'START AGENT {sweep_id}')
 
 wandb.agent(sweep_id, function=main(experiment_name=experiment_name, group_name=group_name, config_dict='agent'), count=50)

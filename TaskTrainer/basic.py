@@ -10,12 +10,9 @@ from abc import ABC, abstractmethod
 
 import torch
 import wandb
-from tqdm import tqdm
 
 from utils.arg import ConfigParser
 from utils.text import text_in_box, RichProgressIterator
-import rich
-from rich.progress import track
 
 # import os
 # import matplotlib.pyplot as plt
@@ -36,9 +33,13 @@ class BasicTask(ABC):
     # config_json = os.path.join(current_directory, 'Basic.json')
 
     # config = 0
-    def __init__(self, config_dict=None, config_json=None, use_wandb=True, experiment_name='train', custom_run_name='', api_key=None, group_name='basic'):
+    def __init__(self, config_dict=None, config_json=None, use_wandb=True, experiment_name='train', custom_run_name='',
+                 api_key=None, group_name='basic'):
         self.custom_run_name = custom_run_name
         self.time = time.strftime("%Y%m%d-%H%M%S", time.localtime())
+        self.running = False
+        self._run_name = None
+        self.different_args = None
         if use_wandb:
             text_in_box('Use Wandb', color='red')
             print('Login Wandb...')
@@ -48,17 +49,15 @@ class BasicTask(ABC):
         self.api_key = api_key
         text_in_box(f'Init Task run in {experiment_name}', color='orange')
 
-        self.different_args = None
         # self.config = ConfigParser(config_json or self.config_json).get_config()
         self.args = None
+        self.use_wandb = use_wandb
         self.parse_args(config_json, config_dict)
         self.device = self.args.device
-        self.use_wandb = use_wandb
         self.experiment_name = experiment_name
         self.group_name = group_name
         # self.task = task
 
-        self._run_name = None
         #################DATA_params#################
         print('Building dataloader...')
         self.train_loader, self.val_loader = self.build_dataloader()
@@ -76,7 +75,6 @@ class BasicTask(ABC):
         print('Building Method...')
         # self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
         self.epoch = 0
-        self.running = False
         self.max_epoch = self.args.max_epoch
         self.optimizer = self.build_optimizer()
         self.scheduler = self.build_scheduler()
@@ -154,13 +152,14 @@ class BasicTask(ABC):
         if config_dict is not None:
             if config_dict == 'agent' and self.use_wandb:
                 config = merge_configs(config, wandb.config)
+                self.different_args = merge_configs({}, wandb.config)
             else:
                 config = merge_configs(config, config_dict)
 
             # 解析最终的配置字典
         parser = ConfigParser(config_dict=config)
         self.args = parser.parse_args()
-        self.different_args = parser.different
+        self.different_args = merge_configs(self.different_args, parser.different)
 
     def log_metrics(self, data):
         if not isinstance(data, dict):
