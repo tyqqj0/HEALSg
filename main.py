@@ -19,10 +19,9 @@ from TaskTrainer.TaskModel.Resnet import Resnet
 from utils.arg import ConfigParser
 
 
-def main(experiment_name='train', group_name='basic', run_name='run', config_dict='agent'):
-    # experiment_name = 'train'
-    # group_name = 'basic'
-    Trainer = TaskTrainer.get_trainer(Supervised, ClassificationData, Resnet, config_dict=config_dict, experiment_name=experiment_name, group_name=group_name, run_name=run_name)
+def main(experiment_name='train', group_name='basic', run_name='run', config_dict='agent', api_key=None, use_wandb=True):
+    Trainer = TaskTrainer.get_trainer(Supervised, ClassificationData, Resnet, config_dict=config_dict, experiment_name=experiment_name, group_name=group_name,
+                                      run_name=run_name, api_key=api_key, use_wandb=use_wandb)
     trainer = Trainer()
     trainer.run()
 
@@ -31,11 +30,6 @@ if __name__ == '__main__':
     experiment_name = 'train'
     group_name = 'basic'
     run_name = 't1'
-    # trainer = TaskTrainer.get_trainer(Supervised, ClassificationData, Resnet, config_dict=None)
-    # trainer.run()
-    main(experiment_name=experiment_name, group_name=group_name, run_name=run_name)
-
-# import os
-# import matplotlib.pyplot as plt
-# import pandas as pd
-# import torchvision
+    api_key = 'YOUR_API_KEY'
+    use_wandb = True
+    main(experiment_name=experiment_name, group_name=group_name, run_name=run_name, api_key=api_key, use_wandb=use_wandb)

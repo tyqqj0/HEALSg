@@ -46,7 +46,7 @@ class BasicTask(ABC):
             wandb.login()
             print('Init Wandb...')
             wandb.init(project=experiment_name, name=self.run_name, group=group_name)
-        self.api_key = api_key
+        self.api_key = api_key if api_key is not 'YOUR_API_KEY' else None
         text_in_box(f'Init Task run in {experiment_name}', color='orange')
 
         # self.config = ConfigParser(config_json or self.config_json).get_config()
