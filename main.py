@@ -22,7 +22,8 @@ from utils.arg import ConfigParser
 def main(experiment_name='train', group_name='basic', run_name='run', config_dict='agent'):
     # experiment_name = 'train'
     # group_name = 'basic'
-    trainer = TaskTrainer.get_trainer(Supervised, ClassificationData, Resnet, config_dict=config_dict, experiment_name=experiment_name, group_name=group_name, run_name=run_name)
+    trainer = TaskTrainer.get_trainer(Supervised, ClassificationData, Resnet, config_dict=config_dict, experiment_name=experiment_name, group_name=group_name,
+                                      run_name=run_name)
     trainer.run()
 
 
