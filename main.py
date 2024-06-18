@@ -20,11 +20,12 @@ from TaskTrainer.TaskModel.Unet import UnetTask
 from utils.arg import ConfigParser
 
 
-def main(experiment_name='train', group_name='basic', run_name='run', config_dict='agent', api_key=None, use_wandb=True):
+def classification(experiment_name='train', group_name='basic', run_name='run', config_dict='agent', api_key=None, use_wandb=True):
     Trainer = TaskTrainer.get_trainer(Supervised, ClassificationData, Resnet, config_dict=config_dict, experiment_name=experiment_name, group_name=group_name,
                                       run_name=run_name, api_key=api_key, use_wandb=use_wandb)
     trainer = Trainer()
     trainer.run()
+
 
 def segmentation(experiment_name='train', group_name='basic', run_name='run', config_dict='agent', api_key=None, use_wandb=True):
     Trainer = TaskTrainer.get_trainer(Supervised, Segmentation3DData, UnetTask, config_dict=config_dict, experiment_name=experiment_name, group_name=group_name,
@@ -33,10 +34,19 @@ def segmentation(experiment_name='train', group_name='basic', run_name='run', co
     trainer.run()
 
 
+def main(trainer, experiment_name='train', group_name='basic', run_name='run', config_dict='agent', api_key=None, use_wandb=True):
+    if trainer == 'classification':
+        classification(experiment_name=experiment_name, group_name=group_name, run_name=run_name, config_dict=config_dict, api_key=api_key, use_wandb=use_wandb)
+    elif trainer == 'segmentation':
+        segmentation(experiment_name=experiment_name, group_name=group_name, run_name=run_name, config_dict=config_dict, api_key=api_key, use_wandb=use_wandb)
+    else:
+        raise ValueError(f'{trainer} is not supported')
+
+
 if __name__ == '__main__':
     experiment_name = 'train'
     group_name = 'basic'
     run_name = 't1'
     api_key = 'YOUR_API_KEY'
     use_wandb = True
-    main(experiment_name=experiment_name, group_name=group_name, run_name=run_name, api_key=api_key, use_wandb=use_wandb)
+    main("segmentation", experiment_name=experiment_name, group_name=group_name, run_name=run_name, api_key=api_key, use_wandb=use_wandb)
