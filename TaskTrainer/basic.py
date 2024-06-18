@@ -142,6 +142,7 @@ class BasicTask(ABC):
                 print(f'Processing config for class: {base_class.__name__}')
                 # 确保配置路径是正确的
                 base_config_json = os.path.join(os.path.dirname(os.path.abspath(__file__)), base_config_json)
+                base_config_json = unify_slash(base_config_json)
                 config = merge_configs(config, ConfigParser(base_config_json).get_config())
 
             # 如果提供了额外的配置路径
@@ -155,8 +156,10 @@ class BasicTask(ABC):
                 self.different_args = merge_configs({}, wandb.config)
             elif isinstance(config_dict, dict):
                 config = merge_configs(config, config_dict)
+            elif config_dict == 'agent' and not self.use_wandb:
+                pass
             else:
-                raise ValueError('config_dict should be dict or "agent"')
+                raise ValueError(f'config_dict should be dict or "agent", now is {config_dict}')
 
             # 解析最终的配置字典
         parser = ConfigParser(config_dict=config)
@@ -264,7 +267,7 @@ class BasicTask(ABC):
         pass
 
 
-def merge_configs(parent_config:dict, child_config:dict):
+def merge_configs(parent_config: dict, child_config: dict):
     """合并两个配置字典，子配置覆盖父配置。"""
     if parent_config is None:
         parent_config = {}
@@ -278,6 +281,11 @@ def merge_configs(parent_config:dict, child_config:dict):
         else:
             parent_config[key] = value
     return parent_config
+
+
+# 统一路径中的斜杠
+def unify_slash(path):
+    return path.replace('\\', '/')
 
 
 class BasicEpoch(ABC):

@@ -12,6 +12,7 @@ from monai import transforms
 from monai.data import load_decathlon_datalist
 # from torch.utils import data
 from torch.utils.data import Sampler
+from torchvision.datasets import VOCSegmentation
 
 from TaskTrainer.basic import BasicTask
 from utils.text import text_in_box
@@ -131,8 +132,30 @@ class Segmentation3DData(BasicTask, ABC):
                 persistent_workers=True,
             )
             # loader = [train_loader, val_loader]
-            self.train_loader = train_loader
-            self.val_loader = val_loader
+            # self.train_loader = train_loader
+            # self.val_loader = val_loader
+            return train_loader, val_loader
+
+
+class VOC2012(VOCSegmentation):
+    def __init__(self, root, year='2012', image_set='train', download=False, transform=None, target_transform=None):
+        super(VOC2012, self).__init__(root, year=year, image_set=image_set, download=download, transform=transform, target_transform=target_transform)
+
+    def __getitem__(self, index):
+        img, tgt = super(VOC2012, self).__getitem__(index)
+        return img, tgt, {'index': index}
+
+
+class Segmentation2DData(BasicTask, ABC):
+    config_json = 'TaskData\\Segmentation.json'
+
+    def build_dataloader(self):
+        data_dir = self.args.data_dir
+        train_data_set = VOC2012(root=data_dir, image_set='train', download=True)
+        val_data_set = VOC2012(root=data_dir, image_set='val', download=True)
+        train_loader = data.DataLoader(train_data_set, batch_size=self.args.batch_size, shuffle=True, num_workers=self.args.num_workers)
+        val_loader = data.DataLoader(val_data_set, batch_size=self.args.batch_size, shuffle=False, num_workers=self.args.num_workers)
+        return train_loader, val_loader
 
     # def run_epoch(self):
     #     epoch = self.epoch
