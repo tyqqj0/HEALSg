@@ -153,8 +153,10 @@ class BasicTask(ABC):
             if config_dict == 'agent' and self.use_wandb:
                 config = merge_configs(config, wandb.config)
                 self.different_args = merge_configs({}, wandb.config)
-            else:
+            elif isinstance(config_dict, dict):
                 config = merge_configs(config, config_dict)
+            else:
+                raise ValueError('config_dict should be dict or "agent"')
 
             # 解析最终的配置字典
         parser = ConfigParser(config_dict=config)
@@ -262,8 +264,14 @@ class BasicTask(ABC):
         pass
 
 
-def merge_configs(parent_config, child_config):
+def merge_configs(parent_config:dict, child_config:dict):
     """合并两个配置字典，子配置覆盖父配置。"""
+    if parent_config is None:
+        parent_config = {}
+    if child_config is None:
+        child_config = {}
+    if not isinstance(parent_config, dict) or not isinstance(child_config, dict):
+        raise ValueError('Both parent_config and child_config should be dict')
     for key, value in child_config.items():
         if key in parent_config and isinstance(parent_config[key], dict) and isinstance(value, dict):
             merge_configs(parent_config[key], value)

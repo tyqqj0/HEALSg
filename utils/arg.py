@@ -76,3 +76,12 @@ class ConfigParser:
 
     def get_config(self):
         return self.config
+
+
+def test(a: int):
+    print(a)
+
+
+if __name__ == "__main__":
+    test(1)
+    test('a')
