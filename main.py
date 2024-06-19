@@ -10,9 +10,11 @@ import torch
 from torch.utils import data
 from torch import nn
 
+import trainer
+
 import TaskTrainer
 from TaskTrainer.TaskData.classification import ClassificationData
-from TaskTrainer.TaskData.segmentation import Segmentation3DData
+from TaskTrainer.TaskData.segmentation import Segmentation3DData, Segmentation2DData
 from TaskTrainer.TaskMethod.supervised import Supervised
 from TaskTrainer.TaskModel.Resnet import Resnet
 from TaskTrainer.TaskModel.Unet import UnetTask
@@ -28,7 +30,7 @@ def classification(experiment_name='train', group_name='basic', run_name='run', 
 
 
 def segmentation(experiment_name='train', group_name='basic', run_name='run', config_dict='agent', api_key=None, use_wandb=True):
-    Trainer = TaskTrainer.get_trainer(Supervised, Segmentation3DData, UnetTask, config_dict=config_dict, experiment_name=experiment_name, group_name=group_name,
+    Trainer = TaskTrainer.get_trainer(Supervised, Segmentation2DData, UnetTask, config_dict=config_dict, experiment_name=experiment_name, group_name=group_name,
                                       run_name=run_name, api_key=api_key, use_wandb=use_wandb)
     trainer = Trainer()
     trainer.run()
